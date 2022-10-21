@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     AuthController,
     RiderController,
+    ManagerController
 };
 /*
 |--------------------------------------------------------------------------
@@ -19,13 +20,12 @@ use App\Http\Controllers\{
 */
 
 Route::group(['prefix' => 'auth'], function () {
-    Route::post('login', [AuthController::class, 'login']);
+    Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::post('register', [AuthController::class, 'register']);
-
     Route::group(['middleware' => 'auth:api'], function () {
-        Route::post('logout', [AuthController::class, 'logout']);
         Route::get('user', [AuthController::class, 'user']);
+        Route::post('logout', [AuthController::class, 'logout']);
+        Route::resource('rider', RiderController::class);
+        Route::resource('manager', ManagerController::class);
     });
-
-     Route::resource('rider', RiderController::class);
 });

@@ -20,7 +20,7 @@ class AuthController extends Controller
    * @param  [string] email
    * @param  [string] password
    * @param  [string] password_confirmation
-   * @return [string] message
+   * @return [string] msg
    */
   public function register(Request $request)
   {
@@ -38,7 +38,7 @@ class AuthController extends Controller
     ]);
     if ($user->save()) {
       return response([
-        'message' => 'Successfully created user!'
+        'msg' => 'Successfully created user!'
       ], 201);
     } else {
       return response(['error' => 'Provide proper details'], 401);
@@ -71,11 +71,11 @@ class AuthController extends Controller
          ],401);
 
 
-      if(auth()->check()){
-          return response()->json([
-          'msg' =>'already login'
-        ], 200);
-      }
+      // if(auth()->check()){
+      //     return response()->json([
+      //     'msg' =>'already login'
+      //   ], 200);
+      // }
 
 
      $user = $request->user();
@@ -101,27 +101,25 @@ class AuthController extends Controller
    */
   public function user(Request $request)
   {
-    // if (!Auth::user()->can('user')) abort(403);
     $user = $request->user();
-    return response($user);
+    return response()->json($user);
   }
 
   /**
    * Logout user (Revoke the token)
    *
-   * @return [string] message
+   * @return [string] msg
    */
   public function logout(Request $request)
   {
     $request->user()->token()->revoke();
-    return response([
-      'message' => 'Successfully logged out'
+    return response()->json([
+      'msg' => 'Successfully logged out'
     ], 200);
   }
 
   public function userpermission(Request $request, $id)
   {
-    // if (!Auth::user()->can('user-permission')) abort(403);
     $request->validate([
       'slug' => 'required|array'
     ]);
@@ -135,7 +133,7 @@ class AuthController extends Controller
 
     return response(
       [
-        'message' => 'Successfully added permission!'
+        'msg' => 'Successfully added permission!'
       ],
       200
     );
@@ -143,7 +141,6 @@ class AuthController extends Controller
 
   public function userrole(Request $request, $id)
   {
-    // if (!Auth::user()->can('user-role')) abort(403);
     $request->validate([
       'slug' => 'required|array'
     ]);
@@ -156,7 +153,7 @@ class AuthController extends Controller
 
     return response(
       [
-        'message' => 'Successfully added roles!'
+        'msg' => 'Successfully added roles!'
       ],
       200
     );

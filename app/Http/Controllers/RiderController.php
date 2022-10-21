@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Rider;
 use Illuminate\Http\Request;
-use PDO;
 
 class RiderController extends Controller
 {
@@ -16,18 +15,39 @@ class RiderController extends Controller
     public function index()
     {
         //
+        $riders = Rider::orderBy('id', 'DESC')->get();
+        return response()->json([
+            'riders' => $riders
+        ]);
     }
 
+   
+
     /**
-     * Show the form for creating a new resource.
+     * Display the specified resource.
      *
+     * @param  \App\Models\Rider  $rider
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function show($id)
     {
         //
-        
+        try{
+            $rider = Rider::find($id);
+            if($rider){
+                return response()->json([
+                    'msg' => 'success',
+                    'rider' => $rider,
+                ]);
+            }
+        } catch(\Exception $e){
+            return response()->json([
+                'msg' => 'error',
+                'exception' => $e
+            ]);
+        }
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -37,52 +57,40 @@ class RiderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       //
         try{
-            $rider = new Rider();
+             request()->validate([
+                'name' => 'required',
+                'phone_number'=>'required',
+                'area_name' => 'required',
+                'photo' => 'mimes:jpeg,jpg,png,bmp'
+            ]);
+
+            $rider = new Rider();            
             $rider->name = $request->name; 
-            $rider->phone = $request->phone;
+            $rider->phone = $request->phone_number;
             $rider->area_name = $request->area_name; 
             
-            if($request->file){
-                $fileName = time().'.'.$request->file->extension();  
-                $request->file->move(public_path('uploads'), $fileName);
-                $rider->picture = $fileName;
+            if ($request->hasFile('photo')) {
+                $file = $request->file('photo');
+                $file_extension = $file->getClientOriginalExtension();
+                $uploadedFile =   (time() + 1) . '.' . $file_extension;
+                $uploadDir    = public_path('tmp/images');
+                $file->move($uploadDir, $uploadedFile);
+                $rider->picture = $uploadedFile;
              }
             $rider->save();
 
             return response()->json([
-                'message' => 'success',
+                'msg' => 'success',
                 'rider' => $rider,
             ]);
         } catch(\Exception $e){
             return response()->json([
-                'message' => 'error',
+                'msg' => 'error',
                 'exception' => $e
             ]);
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Rider  $rider
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Rider $rider)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Rider  $rider
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Rider $rider)
-    {
-        //
     }
 
     /**
@@ -94,19 +102,40 @@ class RiderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+       //
         try{
-            $rider = Rider::find($id);
+             request()->validate([
+                'name' => 'required',
+                'phone_number'=>'required',
+                'area_name' => 'required',
+                'photo' => 'mimes:jpeg,jpg,png,bmp'
+            ]);
+
+            $rider = Rider::find($id);          
+            
             $rider->name = $request->name; 
-            $rider->phone = $request->name;
-            $rider->area_name = $request->name; 
-            $rider->picture = $request->picture;
+            $rider->phone = $request->phone_number;
+            $rider->area_name = $request->area_name; 
+            
+            if ($request->hasFile('photo') && !file_exists('tmp/images/' . $request->photo)) {
+                $file = $request->file('photo');
+                $file_extension = $file->getClientOriginalExtension();
+                $uploadedFile =   (time() + 1) . '.' . $file_extension;
+                $uploadDir    = public_path('tmp/images');
+                $file->move($uploadDir, $uploadedFile);
+                $rider->picture = $uploadedFile;
+             }
+            $rider->save();
 
-            $request->save();
-
-            response("success");
+            return response()->json([
+                'msg' => 'success',
+                'rider' => $rider,
+            ]);
         } catch(\Exception $e){
-            response($e);
+            return response()->json([
+                'msg' => 'error',
+                'exception' => $e
+            ]);
         }
     }
 
@@ -116,8 +145,26 @@ class RiderController extends Controller
      * @param  \App\Models\Rider  $rider
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Rider $rider)
+    public function destroy($id)
     {
         //
+        try{
+            $rider = Rider::find($id);
+            if($rider){
+                if(file_exists(public_path('tmp/images/' . $rider->picture))){
+                    unlink(public_path().'/tmp/images/' . $rider->picture);
+                }
+                $rider->delete();
+                return response()->json([
+                    'msg' => 'success',
+                    'rider' => $rider,
+                ]);
+            }
+        } catch(\Exception $e){
+            return response()->json([
+                'msg' => 'error',
+                'exception' => $e
+            ]);
+        }
     }
 }
