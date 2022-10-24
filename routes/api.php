@@ -23,7 +23,7 @@ Route::group(['prefix' => 'auth'], function () {
         Route::post('logout', [AuthController::class, 'logout']);
 
         // Route::get('/area-manager', 'Api\AreaManagerController@index');
-        Route::get('area-manager', Api\AreaManagerController::class);
+        Route::resource('area-manager', Api\AreaManagerController::class);
     });
     Route::resource('rider', Api\RiderController::class);
 });
