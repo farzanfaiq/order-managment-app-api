@@ -64,7 +64,7 @@ class RiderController extends Controller
                 'name' => 'required',
                 'phone_number'=>'required',
                 'area_name' => 'required',
-                'photo' => 'mimes:jpeg,jpg,png,bmp'
+                'pic' => 'mimes:jpeg,jpg,png,bmp'
             ]);
 
             $rider = new Rider();            
@@ -72,13 +72,13 @@ class RiderController extends Controller
             $rider->phone = $request->phone_number;
             $rider->area_name = $request->area_name; 
             
-            if ($request->hasFile('photo')) {
-                $file = $request->file('photo');
+            if ($request->hasFile('pic')) {
+                $file = $request->file('pic');
                 $file_extension = $file->getClientOriginalExtension();
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');
                 $file->move($uploadDir, $uploadedFile);
-                $rider->picture = $uploadedFile;
+                $rider->picture = "/tmp/images/" . $uploadedFile;
              }
             $rider->save();
 
@@ -109,7 +109,7 @@ class RiderController extends Controller
                 'name' => 'required',
                 'phone_number'=>'required',
                 'area_name' => 'required',
-                'photo' => 'mimes:jpeg,jpg,png,bmp'
+                'pic' => 'mimes:jpeg,jpg,png,bmp'
             ]);
 
             $rider = Rider::find($id);          
@@ -118,13 +118,13 @@ class RiderController extends Controller
             $rider->phone = $request->phone_number;
             $rider->area_name = $request->area_name; 
             
-            if ($request->hasFile('photo') && !file_exists('tmp/images/' . $request->photo)) {
-                $file = $request->file('photo');
+            if ($request->hasFile('pic') && !file_exists('tmp/images/' . $request->pic)) {
+                $file = $request->file('pic');
                 $file_extension = $file->getClientOriginalExtension();
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');
                 $file->move($uploadDir, $uploadedFile);
-                $rider->picture = $uploadedFile;
+                $rider->picture = "/tmp/images/" . $uploadedFile;
              }
             $rider->save();
 

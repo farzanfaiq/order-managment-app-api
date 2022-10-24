@@ -66,7 +66,7 @@ class AreaManagerController extends Controller
                 'phone_number'=>'required',
                 'area_name' => 'required',
                 'zip_code' => 'required',
-                'photo' => 'mimes:jpeg,jpg,png,bmp'
+                'pic' => 'mimes:jpeg,jpg,png,bmp'
             ]);
 
             $area_manager = new AreaManager();            
@@ -76,13 +76,13 @@ class AreaManagerController extends Controller
             $area_manager->area_name = $request->area_name; 
             $area_manager->zip_code = $request->zip_code; 
             
-            if ($request->hasFile('photo')) {
-                $file = $request->file('photo');
+            if ($request->hasFile('pic')) {
+                $file = $request->file('pic');
                 $file_extension = $file->getClientOriginalExtension();
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');
                 $file->move($uploadDir, $uploadedFile);
-                $area_manager->picture = $uploadedFile;
+                $area_manager->picture = "/tmp/images" .  $uploadedFile;
              }
             $area_manager->save();
 
@@ -115,7 +115,7 @@ class AreaManagerController extends Controller
                 'phone_number'=>'required',
                 'area_name' => 'required',
                 'zip_code' => 'required',
-                'photo' => 'mimes:jpeg,jpg,png,bmp'
+                'pic' => 'mimes:jpeg,jpg,png,bmp'
             ]);
 
             $area_manager = AreaManager::find($id);          
@@ -126,13 +126,13 @@ class AreaManagerController extends Controller
             $area_manager->area_name = $request->area_name; 
             $area_manager->zip_code = $request->zip_code; 
             
-            if ($request->hasFile('photo') && !file_exists('tmp/images/' . $request->photo)) {
-                $file = $request->file('photo');
+            if ($request->hasFile('pic') && !file_exists('tmp/images/' . $request->pic)) {
+                $file = $request->file('pic');
                 $file_extension = $file->getClientOriginalExtension();
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');
                 $file->move($uploadDir, $uploadedFile);
-                $area_manager->picture = $uploadedFile;
+                $area_manager->picture = "/tmp/images" .  $uploadedFile;
              }
             $area_manager->save();
 
