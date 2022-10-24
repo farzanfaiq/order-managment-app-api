@@ -66,7 +66,7 @@ class AreaManagerController extends Controller
                 'phone_number'=>'required',
                 'area_name' => 'required',
                 'zip_code' => 'required',
-                'pic' => 'mimes:jpeg,jpg,png,bmp'
+                'photo' => 'mimes:jpeg,jpg,png,bmp'
             ]);
 
             $area_manager = new AreaManager();            
@@ -76,8 +76,8 @@ class AreaManagerController extends Controller
             $area_manager->area_name = $request->area_name; 
             $area_manager->zip_code = $request->zip_code; 
             
-            if ($request->hasFile('pic')) {
-                $file = $request->file('pic');
+            if ($request->hasFile('photo')) {
+                $file = $request->file('photo');
                 $file_extension = $file->getClientOriginalExtension();
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');
@@ -115,7 +115,7 @@ class AreaManagerController extends Controller
                 'phone_number'=>'required',
                 'area_name' => 'required',
                 'zip_code' => 'required',
-                'pic' => 'mimes:jpeg,jpg,png,bmp'
+                'photo' => 'mimes:jpeg,jpg,png,bmp'
             ]);
 
             $area_manager = AreaManager::find($id);          
@@ -126,8 +126,8 @@ class AreaManagerController extends Controller
             $area_manager->area_name = $request->area_name; 
             $area_manager->zip_code = $request->zip_code; 
             
-            if ($request->hasFile('pic') && !file_exists('tmp/images/' . $request->pic)) {
-                $file = $request->file('pic');
+            if ($request->hasFile('photo') && !file_exists('tmp/images/' . $request->photo)) {
+                $file = $request->file('photo');
                 $file_extension = $file->getClientOriginalExtension();
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');

@@ -59,12 +59,12 @@ class RiderController extends Controller
     public function store(Request $request)
     {
        //
-        try{
+        // try{
              request()->validate([
                 'name' => 'required',
                 'phone_number'=>'required',
                 'area_name' => 'required',
-                'pic' => 'mimes:jpeg,jpg,png,bmp'
+                'photo' => 'mimes:jpeg,jpg,png,bmp'
             ]);
 
             $rider = new Rider();            
@@ -72,8 +72,9 @@ class RiderController extends Controller
             $rider->phone = $request->phone_number;
             $rider->area_name = $request->area_name; 
             
-            if ($request->hasFile('pic')) {
-                $file = $request->file('pic');
+            
+            if ($request->hasFile('photo')) {
+                $file = $request->file('photo');
                 $file_extension = $file->getClientOriginalExtension();
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');
@@ -86,12 +87,12 @@ class RiderController extends Controller
                 'msg' => 'success',
                 'rider' => $rider,
             ]);
-        } catch(\Exception $e){
-            return response()->json([
-                'msg' => 'error',
-                'exception' => $e
-            ]);
-        }
+        // } catch(\Exception $e){
+        //     return response()->json([
+        //         'msg' => 'error',
+        //         'exception' => $e
+        //     ]);
+        // }
     }
 
     /**
@@ -109,7 +110,7 @@ class RiderController extends Controller
                 'name' => 'required',
                 'phone_number'=>'required',
                 'area_name' => 'required',
-                'pic' => 'mimes:jpeg,jpg,png,bmp'
+                'photo' => 'mimes:jpeg,jpg,png,bmp'
             ]);
 
             $rider = Rider::find($id);          
@@ -118,8 +119,8 @@ class RiderController extends Controller
             $rider->phone = $request->phone_number;
             $rider->area_name = $request->area_name; 
             
-            if ($request->hasFile('pic') && !file_exists('tmp/images/' . $request->pic)) {
-                $file = $request->file('pic');
+            if ($request->hasFile('photo') && !file_exists('tmp/images/' . $request->photo)) {
+                $file = $request->file('photo');
                 $file_extension = $file->getClientOriginalExtension();
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');
