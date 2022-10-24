@@ -2,12 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
-use App\Http\Controllers\{
-    AuthController,
-    RiderController,
-    ManagerController
-};
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -25,7 +21,9 @@ Route::group(['prefix' => 'auth'], function () {
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('user', [AuthController::class, 'user']);
         Route::post('logout', [AuthController::class, 'logout']);
-        Route::resource('rider', RiderController::class);
-        Route::resource('manager', ManagerController::class);
+
+        // Route::get('/area-manager', 'Api\AreaManagerController@index');
+        Route::get('area-manager', Api\AreaManagerController::class);
     });
+    Route::resource('rider', Api\RiderController::class);
 });

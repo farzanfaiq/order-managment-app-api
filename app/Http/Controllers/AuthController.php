@@ -5,11 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use App\Models\{
-  User,
-  Roles,
-  Permissions
-};
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -91,6 +87,7 @@ class AuthController extends Controller
          'expires_at' => Carbon::parse(
              $tokenResult->token->expires_at
           )->toDateTimeString(),
+          'user' => $user
       ], 200);
   }
 
@@ -118,44 +115,4 @@ class AuthController extends Controller
     ], 200);
   }
 
-  public function userpermission(Request $request, $id)
-  {
-    $request->validate([
-      'slug' => 'required|array'
-    ]);
-    $user = User::find($id);
-
-    $user->permissions()->detach();
-    foreach ($request->slug as $slug) {
-      $permission = Permissions::where('slug', $slug)->first();
-      $user->permissions()->attach($permission);
-    }
-
-    return response(
-      [
-        'msg' => 'Successfully added permission!'
-      ],
-      200
-    );
-  }
-
-  public function userrole(Request $request, $id)
-  {
-    $request->validate([
-      'slug' => 'required|array'
-    ]);
-    $user = User::find($id);
-
-    foreach ($request->slug as $slug) {
-      $role = Roles::where('slug', $slug)->first();
-      $user->roles()->attach($role);
-    }
-
-    return response(
-      [
-        'msg' => 'Successfully added roles!'
-      ],
-      200
-    );
-  }
 }

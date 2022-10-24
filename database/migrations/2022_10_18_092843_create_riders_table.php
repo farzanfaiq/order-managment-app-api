@@ -18,7 +18,7 @@ class CreateRidersTable extends Migration
             $table->string('name');
             $table->string('phone');
             $table->string('area_name');
-            $table->string('picture');
+            $table->string('picture')->nullable();
             $table->timestamps();
         });
     }
