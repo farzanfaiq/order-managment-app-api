@@ -59,12 +59,12 @@ class RiderController extends Controller
     public function store(Request $request)
     {
        //
-        // try{
+        try{
              request()->validate([
                 'name' => 'required',
                 'phone_number'=>'required',
                 'area_name' => 'required',
-                'photo' => 'mimes:jpeg,jpg,png,bmp'
+                // 'photo' => 'mimes:jpeg,jpg,png,bmp'
             ]);
 
             $rider = new Rider();            
@@ -79,7 +79,7 @@ class RiderController extends Controller
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');
                 $file->move($uploadDir, $uploadedFile);
-                $rider->picture = "/tmp/images/" . $uploadedFile;
+                $rider->picture = $uploadedFile;
              }
             $rider->save();
 
@@ -87,12 +87,12 @@ class RiderController extends Controller
                 'msg' => 'success',
                 'rider' => $rider,
             ]);
-        // } catch(\Exception $e){
-        //     return response()->json([
-        //         'msg' => 'error',
-        //         'exception' => $e
-        //     ]);
-        // }
+        } catch(\Exception $e){
+            return response()->json([
+                'msg' => 'error',
+                'exception' => $e
+            ]);
+        }
     }
 
     /**
@@ -112,20 +112,20 @@ class RiderController extends Controller
                 'area_name' => 'required',
                 'photo' => 'mimes:jpeg,jpg,png,bmp'
             ]);
-
             $rider = Rider::find($id);          
-            
+
             $rider->name = $request->name; 
             $rider->phone = $request->phone_number;
             $rider->area_name = $request->area_name; 
+             $rider->save();
             
-            if ($request->hasFile('photo') && !file_exists('tmp/images/' . $request->photo)) {
+             if ($request->hasFile('photo') && !file_exists('tmp/images/' . $request->photo)) {
                 $file = $request->file('photo');
                 $file_extension = $file->getClientOriginalExtension();
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');
                 $file->move($uploadDir, $uploadedFile);
-                $rider->picture = "/tmp/images/" . $uploadedFile;
+                $rider->picture = $uploadedFile;
              }
             $rider->save();
 
@@ -153,10 +153,9 @@ class RiderController extends Controller
         try{
             $rider = Rider::find($id);
             if($rider){
-                if(file_exists(public_path('tmp/images/' . $rider->picture))){
+                if($rider->picture){
                     unlink(public_path().'/tmp/images/' . $rider->picture);
                 }
-                $rider->delete();
                 return response()->json([
                     'msg' => 'success',
                     'rider' => $rider,

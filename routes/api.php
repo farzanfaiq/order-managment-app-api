@@ -25,6 +25,20 @@ Route::group(['prefix' => 'auth', 'middleware' => ['api', 'cors']], function () 
     // });
 
 
-    Route::resource('area-manager', Api\AreaManagerController::class);
-    Route::resource('rider', Api\RiderController::class);
+    // Route::resource('area-manager', Api\AreaManagerController::class);
+    // Route::resource('rider', Api\RiderController::class);
+
+    
+    Route::post('area-manager/store', 'Api\AreaManagerController@store');
+    Route::post('area-manager/update/{id}', 'Api\AreaManagerController@update');
+    Route::post('area-manager/destroy/{id}', 'Api\AreaManagerController@destroy');
+    Route::get('area-manager/{id}', 'Api\AreaManagerController@show');
+    Route::get('area-manager', 'Api\AreaManagerController@index');
+
+
+    Route::post('rider/store', 'Api\RiderController@store');
+    Route::post('rider/update/{id}', 'Api\RiderController@update');
+    Route::post('rider/destroy/{id}', 'Api\RiderController@destroy');
+    Route::get('rider/{id}', 'Api\RiderController@show');
+    Route::get('rider', 'Api\RiderController@index');
 });
