@@ -57,6 +57,7 @@ class AuthController extends Controller
              'email' => 'required|string|email',
              'password' => 'required|string'
            ]);
+
       
     $credentials = request(['email', 'password']);
 
@@ -65,13 +66,6 @@ class AuthController extends Controller
          return response()->json([
             'msg' => 'Login Failed'
          ],401);
-
-
-      // if(auth()->check()){
-      //     return response()->json([
-      //     'msg' =>'already login'
-      //   ], 200);
-      // }
 
 
      $user = $request->user();

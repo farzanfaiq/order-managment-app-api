@@ -90,7 +90,7 @@ class RiderController extends Controller
         } catch(\Exception $e){
             return response()->json([
                 'msg' => 'error',
-                'exception' => $e
+                'exception' => $e->getMessage()
             ]);
         }
     }
@@ -110,7 +110,7 @@ class RiderController extends Controller
                 'name' => 'required',
                 'phone_number'=>'required',
                 'area_name' => 'required',
-                'photo' => 'mimes:jpeg,jpg,png,bmp'
+                // 'photo' => 'mimes:jpeg,jpg,png,bmp'
             ]);
             $rider = Rider::find($id);          
 
@@ -156,6 +156,7 @@ class RiderController extends Controller
                 if($rider->picture){
                     unlink(public_path().'/tmp/images/' . $rider->picture);
                 }
+                $rider->delete();
                 return response()->json([
                     'msg' => 'success',
                     'rider' => $rider,
