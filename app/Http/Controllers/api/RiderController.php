@@ -153,7 +153,7 @@ class RiderController extends Controller
         try{
             $rider = Rider::find($id);
             if($rider){
-                if($rider->picture){
+                if($rider->picture && file_exists(public_path().'/tmp/images/' . $rider->picture)){
                     unlink(public_path().'/tmp/images/' . $rider->picture);
                 }
                 $rider->delete();

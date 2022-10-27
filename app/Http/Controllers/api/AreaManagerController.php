@@ -160,7 +160,7 @@ class AreaManagerController extends Controller
         try{
             $area_manager = AreaManager::find($id);
             if($area_manager){
-                if(file_exists(public_path('tmp/images/' . $area_manager->picture))){
+                if($area_manager->picture && file_exists(public_path().'/tmp/images/' . $area_manager->picture)){
                     unlink(public_path().'/tmp/images/' . $area_manager->picture);
                 }
                 $area_manager->delete();
