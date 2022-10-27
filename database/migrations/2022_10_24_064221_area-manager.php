@@ -18,7 +18,7 @@ class AreaManager extends Migration
             $table->id();
             $table->string('name');
             $table->string('email');
-            $table->string('phone');
+            $table->string('phone_number');
             $table->string('area_name');
             $table->string('zip_code');
             $table->string('picture')->nullable();

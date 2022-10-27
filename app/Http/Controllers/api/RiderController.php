@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Rider;
+use Illuminate\Support\Facades\Validator;
 
 class RiderController extends Controller
 {
@@ -60,21 +61,28 @@ class RiderController extends Controller
     {
        //
         try{
-             request()->validate([
+            $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'phone_number'=>'required',
                 'area_name' => 'required',
-                // 'photo' => 'mimes:jpeg,jpg,png,bmp'
+                'picture' => 'mimes:jpeg,jpg,png,bmp'
             ]);
+ 
+            if ($validator->fails()) {
+                return response()->json([
+                    'msg' => $validator->errors()->first()
+                ]);
+            }
+
 
             $rider = new Rider();            
             $rider->name = $request->name; 
-            $rider->phone = $request->phone_number;
+            $rider->phone_number = $request->phone_number;
             $rider->area_name = $request->area_name; 
             
             
-            if ($request->hasFile('photo')) {
-                $file = $request->file('photo');
+            if ($request->hasFile('picture')) {
+                $file = $request->file('picture');
                 $file_extension = $file->getClientOriginalExtension();
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');
@@ -106,21 +114,28 @@ class RiderController extends Controller
     {
        //
         try{
-             request()->validate([
+            $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'phone_number'=>'required',
                 'area_name' => 'required',
-                // 'photo' => 'mimes:jpeg,jpg,png,bmp'
+                'picture' => 'mimes:jpeg,jpg,png,bmp'
             ]);
+ 
+            if ($validator->fails()) {
+                return response()->json([
+                    'msg' => $validator->errors()->first()
+                ]);
+            }
+
             $rider = Rider::find($id);          
 
             $rider->name = $request->name; 
-            $rider->phone = $request->phone_number;
+            $rider->phone_number = $request->phone_number;
             $rider->area_name = $request->area_name; 
              $rider->save();
             
-             if ($request->hasFile('photo') && !file_exists('tmp/images/' . $request->photo)) {
-                $file = $request->file('photo');
+             if ($request->hasFile('picture') && !file_exists('tmp/images/' . $request->picture)) {
+                $file = $request->file('picture');
                 $file_extension = $file->getClientOriginalExtension();
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');

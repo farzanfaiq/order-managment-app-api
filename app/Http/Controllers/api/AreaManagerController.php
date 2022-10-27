@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\AreaManager;
+use Illuminate\Support\Facades\Validator;
 
 class AreaManagerController extends Controller
 {
@@ -60,24 +61,31 @@ class AreaManagerController extends Controller
     {
        //
         try{
-             request()->validate([
+            $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'email' => 'required|email',
                 'phone_number'=>'required',
                 'area_name' => 'required',
                 'zip_code' => 'required',
-                'photo' => 'mimes:jpeg,jpg,png,bmp'
+                'picture' => 'mimes:jpeg,jpg,png,bmp'
             ]);
+ 
+            if ($validator->fails()) {
+                return response()->json([
+                    'msg' => $validator->errors()->first()
+                ]);
+            }
+
 
             $area_manager = new AreaManager();            
             $area_manager->name = $request->name;  
             $area_manager->email = $request->email; 
-            $area_manager->phone = $request->phone_number;
+            $area_manager->phone_number = $request->phone_number;
             $area_manager->area_name = $request->area_name; 
             $area_manager->zip_code = $request->zip_code; 
             
-            if ($request->hasFile('photo')) {
-                $file = $request->file('photo');
+            if ($request->hasFile('picture')) {
+                $file = $request->file('picture');
                 $file_extension = $file->getClientOriginalExtension();
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');
@@ -109,25 +117,31 @@ class AreaManagerController extends Controller
     {
        //
         try{
-             request()->validate([
+             $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'email' => 'required|email',
                 'phone_number'=>'required',
                 'area_name' => 'required',
                 'zip_code' => 'required',
-                'photo' => 'mimes:jpeg,jpg,png,bmp'
+                'picture' => 'mimes:jpeg,jpg,png,bmp'
             ]);
+ 
+            if ($validator->fails()) {
+                return response()->json([
+                    'msg' => $validator->errors()->first()
+                ]);
+            }
 
             $area_manager = AreaManager::find($id);          
             
             $area_manager->name = $request->name;  
             $area_manager->email = $request->email; 
-            $area_manager->phone = $request->phone_number;
+            $area_manager->phone_number = $request->phone_number;
             $area_manager->area_name = $request->area_name; 
             $area_manager->zip_code = $request->zip_code; 
             
-            if ($request->hasFile('photo') && !file_exists('tmp/images/' . $request->photo)) {
-                $file = $request->file('photo');
+            if ($request->hasFile('picture') && !file_exists('tmp/images/' . $request->picture)) {
+                $file = $request->file('picture');
                 $file_extension = $file->getClientOriginalExtension();
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');

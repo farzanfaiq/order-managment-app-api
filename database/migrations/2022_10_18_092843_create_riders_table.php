@@ -16,7 +16,7 @@ class CreateRidersTable extends Migration
         Schema::create('riders', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('phone');
+            $table->string('phone_number');
             $table->string('area_name');
             $table->string('picture')->nullable();
             $table->timestamps();
