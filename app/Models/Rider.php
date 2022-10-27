@@ -10,5 +10,5 @@ class Rider extends Model
     use HasFactory;
 
     protected $table = 'riders';
-    protected $fillable = ['name', 'phone', 'area_name', 'picture'];
+    protected $fillable = ['name', 'phone_number', 'area_name', 'picture'];
 }
