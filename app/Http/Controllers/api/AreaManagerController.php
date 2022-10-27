@@ -67,7 +67,6 @@ class AreaManagerController extends Controller
                 'phone_number'=>'required',
                 'area_name' => 'required',
                 'zip_code' => 'required',
-                'picture' => 'mimes:jpeg,jpg,png,bmp'
             ]);
  
             if ($validator->fails()) {

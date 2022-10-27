@@ -118,7 +118,6 @@ class RiderController extends Controller
                 'name' => 'required',
                 'phone_number'=>'required',
                 'area_name' => 'required',
-                'picture' => 'mimes:jpeg,jpg,png,bmp'
             ]);
  
             if ($validator->fails()) {
