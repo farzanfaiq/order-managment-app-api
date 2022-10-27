@@ -90,7 +90,7 @@ class AreaManagerController extends Controller
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');
                 $file->move($uploadDir, $uploadedFile);
-                $area_manager->picture = "/tmp/images" .  $uploadedFile;
+                $area_manager->picture = $uploadedFile;
              }
             $area_manager->save();
 
@@ -146,7 +146,7 @@ class AreaManagerController extends Controller
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');
                 $file->move($uploadDir, $uploadedFile);
-                $area_manager->picture = "/tmp/images" .  $uploadedFile;
+                $area_manager->picture = $uploadedFile;
              }
             $area_manager->save();
 
