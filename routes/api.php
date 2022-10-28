@@ -29,16 +29,16 @@ Route::group(['prefix' => 'auth', 'middleware' => ['api', 'cors']], function () 
     // Route::resource('rider', Api\RiderController::class);
 
     
-    Route::post('area-manager/store', 'Api\AreaManagerController@store');
-    Route::post('area-manager/update/{id}', 'Api\AreaManagerController@update');
-    Route::post('area-manager/destroy/{id}', 'Api\AreaManagerController@destroy');
+    Route::post('area-manager/', 'Api\AreaManagerController@store');
+    Route::post('area-manager/{id}', 'Api\AreaManagerController@update');
+    Route::delete('area-manager/{id}', 'Api\AreaManagerController@destroy');
     Route::get('area-manager/{id}', 'Api\AreaManagerController@show');
     Route::get('area-manager', 'Api\AreaManagerController@index');
 
 
-    Route::post('rider/store', 'Api\RiderController@store');
-    Route::post('rider/update/{id}', 'Api\RiderController@update');
-    Route::post('rider/destroy/{id}', 'Api\RiderController@destroy');
+    Route::post('rider/', 'Api\RiderController@store');
+    Route::post('rider/{id}', 'Api\RiderController@update');
+    Route::delete('rider/{id}', 'Api\RiderController@destroy');
     Route::get('rider/{id}', 'Api\RiderController@show');
     Route::get('rider', 'Api\RiderController@index');
 });
