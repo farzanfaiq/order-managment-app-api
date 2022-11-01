@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
-use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
-class AuthController extends Controller
+class CustomerController extends Controller
 {
-  /**
+//     protected function guard()
+// {
+//     return Auth::guard('customer');
+// }
+
+     /**
    * Create user
    *
    * @param  [string] name
@@ -24,9 +29,11 @@ class AuthController extends Controller
   {
     $validator = Validator::make($request->all(), [
                 'name' => 'required|string',
-      'email' => 'required|string|email|unique:users',
-      'password' => 'required|string|',
-      'c_password' => 'required|same:password',
+                'email' => 'required|string|email|unique:customers',
+                'password' => 'required|string|',
+                'c_password' => 'required|same:password',
+                'phone_number' => 'required|string',
+                'gender' => 'required|string',
             ]);
  
             if ($validator->fails()) {
@@ -35,14 +42,16 @@ class AuthController extends Controller
                 ]);
             }
 
-    $user = new User([
+    $customer = new Customer([
       'name' => $request->name,
       'email' => $request->email,
-      'password' => bcrypt($request->password)
+      'password' => bcrypt($request->password),
+      'phone_number' => $request->phone_number,
+      'gender' => $request->gender,
     ]);
-    if ($user->save()) {
+    if ($customer->save()) {
       return response([
-        'msg' => 'Successfully created user!'
+        'msg' => 'Successfully created customer!'
       ], 201);
     } else {
       return response(['error' => 'Provide proper details'], 401);
@@ -50,7 +59,7 @@ class AuthController extends Controller
   }
 
   /**
-   * Login user and create token
+   * Login customer and create token
    *
    * @param  [string] email
    * @param  [string] password
@@ -61,9 +70,10 @@ class AuthController extends Controller
    */
   public function login(Request $request)
   {
+    
            $validator = Validator::make($request->all(), [
                 'email' => 'required|email',
-             'password' => 'required'
+                'password' => 'required'
             ]);
  
             if ($validator->fails()) {
@@ -75,14 +85,14 @@ class AuthController extends Controller
       
     $credentials = request(['email', 'password']);
 
-     if(!auth('api')->attempt($credentials))
+     if(!auth('customer')->attempt($credentials)){
          return response()->json([
-            'msg' => 'Login credentials are incorrect'
+            'msg' => 'Login credentials are incorrect', 
          ],401);
+}
 
-
-     $user = auth('api')->user();
-     $tokenResult = $user->createToken('Personal Access Token');
+     $customer = auth('customer')->user();
+     $tokenResult = $customer->createToken('Personal Access Token');
      $token = $tokenResult->token;
      if ($request->remember_me)
          $token->expires_at = Carbon::now()->addWeeks(1);
@@ -94,7 +104,7 @@ class AuthController extends Controller
          'expires_at' => Carbon::parse(
              $tokenResult->token->expires_at
           )->toDateTimeString(),
-          'user' => $user
+          'customer' => $customer
       ], 200);
   }
 
@@ -103,10 +113,10 @@ class AuthController extends Controller
    *
    * @return [json] user object
    */
-  public function user()
+  public function customer(Request $request)
   {
-    $user = auth('api')->user();
-    return response()->json($user);
+    $customer = $request->guard('customer')->user();
+    return response()->json($customer);
   }
 
   /**
@@ -114,10 +124,10 @@ class AuthController extends Controller
    *
    * @return [string] msg
    */
-  public function logout()
+  public function logout(Request $request)
   {
     try{
-      auth('api')->user()->token()->revoke();
+      $this->guard('customer')->user()->token()->revoke();
     return response()->json([
       'msg' => 'Successfully logged out'
     ], 200);
@@ -128,5 +138,4 @@ class AuthController extends Controller
     }
 
   }
-
 }

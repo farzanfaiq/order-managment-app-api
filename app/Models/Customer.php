@@ -3,28 +3,27 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
-use App\Traits\HasPermissionTrait;
 
-class User extends Authenticatable
+class Customer extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasPermissionTrait;
+    use HasFactory, HasApiTokens, Notifiable;
 
-protected $guard = 'user';
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $guard = 'customer';
+    protected $table = 'customers';
+    
     protected $fillable = [
         'name',
         'email',
         'password',
+        'phone_number',
+        'gender'
     ];
 
-    /**
+     /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
