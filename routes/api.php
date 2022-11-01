@@ -37,21 +37,20 @@ Route::group(['prefix' => 'auth'], function () {
         Route::post('logout', [AuthController::class, 'logout']);
     });
 
+    // Route::resource('area-manager', Api\AreaManagerController::class);
+    // Route::resource('rider', Api\RiderController::class);    
+    
+    Route::post('area-manager/', 'Api\AreaManagerController@store');
+    Route::post('area-manager/{id}', 'Api\AreaManagerController@update');
+    Route::delete('area-manager/{id}', 'Api\AreaManagerController@destroy');
+    Route::get('area-manager/{id}', 'Api\AreaManagerController@show');
+    Route::get('area-manager', 'Api\AreaManagerController@index');
+    
+    
+    Route::post('rider/', 'Api\RiderController@store');
+    Route::post('rider/{id}', 'Api\RiderController@update');
+    Route::delete('rider/{id}', 'Api\RiderController@destroy');
+    Route::get('rider/{id}', 'Api\RiderController@show');
+    Route::get('rider', 'Api\RiderController@index');
 });
 
-
-// Route::resource('area-manager', Api\AreaManagerController::class);
-// Route::resource('rider', Api\RiderController::class);    
-
-Route::post('area-manager/', 'Api\AreaManagerController@store');
-Route::post('area-manager/{id}', 'Api\AreaManagerController@update');
-Route::delete('area-manager/{id}', 'Api\AreaManagerController@destroy');
-Route::get('area-manager/{id}', 'Api\AreaManagerController@show');
-Route::get('area-manager', 'Api\AreaManagerController@index');
-
-
-Route::post('rider/', 'Api\RiderController@store');
-Route::post('rider/{id}', 'Api\RiderController@update');
-Route::delete('rider/{id}', 'Api\RiderController@destroy');
-Route::get('rider/{id}', 'Api\RiderController@show');
-Route::get('rider', 'Api\RiderController@index');
