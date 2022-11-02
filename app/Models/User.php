@@ -12,7 +12,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasPermissionTrait;
 
-protected $guard = 'user';
     /**
      * The attributes that are mass assignable.
      *
@@ -22,6 +21,8 @@ protected $guard = 'user';
         'name',
         'email',
         'password',
+        'phone_number',
+        'gender'
     ];
 
     /**
@@ -42,4 +43,11 @@ protected $guard = 'user';
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function assignRole(...$slug){
+        $role = Roles::where('slug',$slug)->first();
+        if($role){
+            $this->roles()->attach($role);
+        } 
+    }
 }

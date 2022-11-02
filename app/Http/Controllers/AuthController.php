@@ -22,18 +22,25 @@ class AuthController extends Controller
    */
   public function register(Request $request)
   {
-    $validator = Validator::make($request->all(), [
+    
+            $validator = Validator::make($request->all(), [
                 'name' => 'required|string',
-      'email' => 'required|string|email|unique:users',
-      'password' => 'required|string|',
-      'c_password' => 'required|same:password',
+                'email' => 'required|string|email|unique:users',
+                'password' => 'required|string',
+                'c_password' => 'required|same:password',
+                'role' => 'exists:roles,slug|required|string',
+                'phone_number' => 'required_if:role,customer',
+                'gender' => 'required_if:role,customer',
             ]);
  
+
             if ($validator->fails()) {
                 return response()->json([
                     'msg' => $validator->errors()->first()
                 ]);
             }
+
+    
 
     $user = new User([
       'name' => $request->name,
@@ -41,9 +48,8 @@ class AuthController extends Controller
       'password' => bcrypt($request->password)
     ]);
     if ($user->save()) {
-      return response([
-        'msg' => 'Successfully created user!'
-      ], 201);
+      $user->assignRole($request->role);
+      return response([ 'msg' => 'Successfully created user!'], 200);
     } else {
       return response(['error' => 'Provide proper details'], 401);
     }
@@ -61,27 +67,26 @@ class AuthController extends Controller
    */
   public function login(Request $request)
   {
-           $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
-             'password' => 'required'
-            ]);
- 
-            if ($validator->fails()) {
-                return response()->json([
-                    'msg' => $validator->errors()->first(),
-                    'response' => $request->all()
-                ]);
-            }
+    $validator = Validator::make($request->all(), [
+        'email' => 'required|email',
+        'password' => 'required'
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'msg' => $validator->errors()->first(),
+            'response' => $request->all()
+        ]);
+    }
       
     $credentials = request(['email', 'password']);
 
-     if(!auth('api')->attempt($credentials))
-         return response()->json([
-            'msg' => 'Login credentials are incorrect'
-         ],401);
+     if(!Auth::attempt($credentials)){
+       return response()->json([ 'msg' => 'Login credentials are incorrect'],401);
+     }
 
 
-     $user = auth('api')->user();
+    $user = $request->user();
      $tokenResult = $user->createToken('Personal Access Token');
      $token = $tokenResult->token;
      if ($request->remember_me)
@@ -103,9 +108,9 @@ class AuthController extends Controller
    *
    * @return [json] user object
    */
-  public function user()
+  public function user(Request $request)
   {
-    $user = auth('api')->user();
+    $user = $request->user();
     return response()->json($user);
   }
 
@@ -114,17 +119,13 @@ class AuthController extends Controller
    *
    * @return [string] msg
    */
-  public function logout()
+  public function logout(Request $request)
   {
     try{
-      auth('api')->user()->token()->revoke();
-    return response()->json([
-      'msg' => 'Successfully logged out'
-    ], 200);
+      $request->user()->token()->revoke();
+      return response()->json([ 'msg' => 'Successfully logged out' ], 200);
     } catch(Exception $e){
-      return response()->json([
-      'msg' => $e->getMessage()
-    ], 200);
+      return response()->json([ 'msg' => $e->getMessage()], 200);
     }
 
   }

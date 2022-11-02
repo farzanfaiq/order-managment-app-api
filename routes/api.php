@@ -2,10 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{
-    AuthController,
-    CustomerController
-};
+use App\Http\Controllers\AuthController;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,24 +18,19 @@ use App\Http\Controllers\{
 */
 
 
-Route::post('login', [CustomerController::class, 'login'])->name('customerlogin');
-Route::post('register', [CustomerController::class, 'register']);
 
-Route::group(['middleware' => ['auth:customer']], function () {
-    Route::get('customer', [CustomerController::class, 'customer']);
-    Route::post('logout', [CustomerController::class, 'logout'])->name('customerlogout');
-});
-
-
+// Users
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::post('register', [AuthController::class, 'register']);
-    
-    Route::group(['middleware' => ['auth:api']], function () {
-        Route::get('user', [AuthController::class, 'user']);
-        Route::post('logout', [AuthController::class, 'logout']);
-    });
+});
 
+
+Route::group(['middleware'=>'auth:api'],function(){
+    Route::get('user', [AuthController::class, 'user']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    
+if(Auth::user() && !Auth::user()->hasRole('customer')){
     // Route::resource('area-manager', Api\AreaManagerController::class);
     // Route::resource('rider', Api\RiderController::class);    
     
@@ -52,5 +46,5 @@ Route::group(['prefix' => 'auth'], function () {
     Route::delete('rider/{id}', 'Api\RiderController@destroy');
     Route::get('rider/{id}', 'Api\RiderController@show');
     Route::get('rider', 'Api\RiderController@index');
+}
 });
-
