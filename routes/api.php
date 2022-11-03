@@ -32,7 +32,7 @@ Route::group(['middleware'=>'auth:api'],function(){
     Route::get('user', [AuthController::class, 'user']);
     Route::post('logout', [AuthController::class, 'logout']);
     
-// if(Auth::user() && !Auth::user()->hasRole('customer')){
+if(Auth::user() && !Auth::user()->hasRole('customer')){
     // Route::resource('area-manager', Api\AreaManagerController::class);
     // Route::resource('rider', Api\RiderController::class);    
     
@@ -42,11 +42,12 @@ Route::group(['middleware'=>'auth:api'],function(){
     Route::get('area-manager/{id}', 'Api\AreaManagerController@show');
     Route::get('area-manager', 'Api\AreaManagerController@index');
     
+    
     Route::post('rider/', 'Api\RiderController@store');
     Route::post('rider/{id}', 'Api\RiderController@update');
     Route::delete('rider/{id}', 'Api\RiderController@destroy');
     Route::get('rider/{id}', 'Api\RiderController@show');
     Route::get('rider', 'Api\RiderController@index');
-// }
+}
 });
 
