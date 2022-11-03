@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use League\CommonMark\Node\Block\Document;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,11 +27,12 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 
+
 Route::group(['middleware'=>'auth:api'],function(){
     Route::get('user', [AuthController::class, 'user']);
     Route::post('logout', [AuthController::class, 'logout']);
     
-if(Auth::user() && !Auth::user()->hasRole('customer')){
+// if(Auth::user() && !Auth::user()->hasRole('customer')){
     // Route::resource('area-manager', Api\AreaManagerController::class);
     // Route::resource('rider', Api\RiderController::class);    
     
@@ -40,11 +42,11 @@ if(Auth::user() && !Auth::user()->hasRole('customer')){
     Route::get('area-manager/{id}', 'Api\AreaManagerController@show');
     Route::get('area-manager', 'Api\AreaManagerController@index');
     
-    
     Route::post('rider/', 'Api\RiderController@store');
     Route::post('rider/{id}', 'Api\RiderController@update');
     Route::delete('rider/{id}', 'Api\RiderController@destroy');
     Route::get('rider/{id}', 'Api\RiderController@show');
     Route::get('rider', 'Api\RiderController@index');
-}
+// }
 });
+
