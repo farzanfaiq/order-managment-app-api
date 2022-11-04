@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Rider;
+use App\Models\Category;
 use Illuminate\Support\Facades\Validator;
 
-class RiderController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +17,9 @@ class RiderController extends Controller
     public function index()
     {
         //
-        $riders = Rider::orderBy('id', 'DESC')->get();
+        $categories = Category::orderBy('id', 'DESC')->get();
         return response()->json([
-            'riders' => $riders
+            'categories' => $categories
         ]);
     }
 
@@ -35,11 +35,11 @@ class RiderController extends Controller
     {
         //
         try{
-            $rider = Rider::find($id);
-            if($rider){
+            $category = Category::find($id);
+            if($category){
                 return response()->json([
                     'msg' => 'success',
-                    'rider' => $rider,
+                    'category' => $category,
                 ]);
             }
         } catch(\Exception $e){
@@ -62,10 +62,10 @@ class RiderController extends Controller
        //
         try{
             $validator = Validator::make($request->all(), [
-                'name' => 'required',
-                'phone_number'=>'required',
-                'area_name' => 'required',
-                // 'picture' => 'mimes:jpeg,jpg,png,bmp'
+                'name' => 'required|string',
+                'status'=>'required|string',
+                'user_id' => 'exists:users,id|required|integer',
+                'image' => 'mimes:jpeg,jpg,png,bmp'
             ]);
  
             if ($validator->fails()) {
@@ -75,25 +75,25 @@ class RiderController extends Controller
             }
 
 
-            $rider = new Rider();            
-            $rider->name = $request->name; 
-            $rider->phone_number = $request->phone_number;
-            $rider->area_name = $request->area_name; 
+            $category = new Category();            
+            $category->name = $request->name; 
+            $category->status = $request->status;
+            $category->user_id = $request->user_id; 
             
             
-            if ($request->hasFile('picture')) {
-                $file = $request->file('picture');
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
                 $file_extension = $file->getClientOriginalExtension();
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');
                 $file->move($uploadDir, $uploadedFile);
-                $rider->picture = $uploadedFile;
+                $category->image = $uploadedFile;
              }
-            $rider->save();
+            $category->save();
 
             return response()->json([
                 'msg' => 'success',
-                'rider' => $rider,
+                'category' => $category,
             ]);
         } catch(\Exception $e){
             return response()->json([
@@ -115,11 +115,12 @@ class RiderController extends Controller
        //
         try{
             $validator = Validator::make($request->all(), [
-                'name' => 'required',
-                'phone_number'=>'required',
-                'area_name' => 'required',
-                // 'picture' => 'mimes:jpeg,jpg,png,bmp'
+                'name' => 'required|string',
+                'status'=>'required|string',
+                'user_id' => 'exists:users,id|required|integer',
+                // 'image' => 'mimes:jpeg,jpg,png,bmp'
             ]);
+ 
  
             if ($validator->fails()) {
                 return response()->json([
@@ -127,26 +128,28 @@ class RiderController extends Controller
                 ]);
             }
 
-            $rider = Rider::find($id);          
+            $category = Category::find($id);          
 
-            $rider->name = $request->name; 
-            $rider->phone_number = $request->phone_number;
-            $rider->area_name = $request->area_name; 
+            $category->name = $request->name; 
+            $category->status = $request->status;
+            $category->user_id = $request->user_id; 
             
-             if ($request->hasFile('picture') && !file_exists('tmp/images/' . $request->picture)) {
-                $file = $request->file('picture');
+            
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
                 $file_extension = $file->getClientOriginalExtension();
                 $uploadedFile =   (time() + 1) . '.' . $file_extension;
                 $uploadDir    = public_path('tmp/images');
                 $file->move($uploadDir, $uploadedFile);
-                $rider->picture = $uploadedFile;
+                $category->image = $uploadedFile;
              }
-            $rider->save();
+            $category->save();
 
             return response()->json([
                 'msg' => 'success',
-                'rider' => $rider,
+                'category' => $category,
             ]);
+
         } catch(\Exception $e){
             return response()->json([
                 'msg' => 'error',
@@ -165,15 +168,15 @@ class RiderController extends Controller
     {
         //
         try{
-            $rider = Rider::find($id);
-            if($rider){
-                if($rider->picture && file_exists(public_path().'/tmp/images/' . $rider->picture)){
-                    unlink(public_path().'/tmp/images/' . $rider->picture);
+            $category = Category::find($id);
+            if($category){
+                if($category->image && file_exists(public_path().'/tmp/images/' . $category->image)){
+                    unlink(public_path().'/tmp/images/' . $category->image);
                 }
-                $rider->delete();
+                $category->delete();
                 return response()->json([
                     'msg' => 'success',
-                    'rider' => $rider,
+                    'category' => $category,
                 ]);
             }
         } catch(\Exception $e){
@@ -184,4 +187,3 @@ class RiderController extends Controller
         }
     }
 }
-
