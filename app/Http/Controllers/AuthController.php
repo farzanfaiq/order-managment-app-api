@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -78,19 +79,29 @@ class AuthController extends Controller
             'response' => $request->all()
         ]);
     }
-      
-    $credentials = request(['email', 'password']);
 
-     if(!Auth::attempt($credentials)){
-       return response()->json([ 'msg' => 'Login credentials are incorrect'],401);
-     }
+    $type = $request->input('type');
+    $email = $request->input('email');
+    $password = $request->input('password');
 
+    $user = User::with(['roles'])->where('email', '=', $email)->first();
 
-    $user = $request->user();
-     $tokenResult = $user->createToken(rand(10, 99999));
-     $token = $tokenResult->token;
-     if ($request->remember_me)
-         $token->expires_at = Carbon::now()->addWeeks(1);
+    if(!$user){
+      return response()->json([ 'msg' => 'Email Incorrect'], 401);
+    }
+
+    if($type != $user->roles->last()->slug){
+      return response()->json([ 'msg' => 'Incorrect credentials'], 401);
+    }
+
+    if (!Hash::check($password, $user->password)) {
+      return response()->json([ 'msg' => 'Password Incorrect'], 401);
+    }   
+
+    $tokenResult = $user->createToken(rand(10, 99999));
+    $token = $tokenResult->token;
+    if ($request->remember_me)
+        $token->expires_at = Carbon::now()->addWeeks(1);
      $token->save();
      return response()->json([
          'msg' => 'Login Successfull',
