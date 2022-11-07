@@ -36,8 +36,13 @@ Route::group(['middleware'=>'auth:api'],function(){
     Route::resource('area-manager', Api\AreaManagerController::class);
     Route::resource('rider', Api\RiderController::class);    
     
+    
+    Route::post('area-manager', 'AuthController@register');
+    Route::post('rider', 'AuthController@register');
+
+
     Route::post('area-manager/{id}', 'Api\AreaManagerController@update');
     Route::post('rider/{id}', 'Api\RiderController@update');
-// }
+    // }
 });
 

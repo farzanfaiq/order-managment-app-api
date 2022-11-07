@@ -22,16 +22,17 @@ class AuthController extends Controller
    * @return [string] msg
    */
   public function register(Request $request)
-  {
-    
+  { 
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string',
                 'email' => 'required|string|email|unique:users',
-                'password' => 'required|string',
-                'c_password' => 'required|same:password',
+                'password' => 'required_if:role,admin|required_if:role,customer|string',
+                'c_password' => 'required_if:role,admin|required_if:role,customer|same:password',
                 'role' => 'exists:roles,slug|required|string',
-                'phone_number' => 'required_if:role,customer',
+                'phone_number' => 'required_if:role,customer|required_if:role,manager|required_if:role,rider',
                 'gender' => 'required_if:role,customer',
+                'area_name' => 'required_if:role,manager|required_if:role,rider',
+                'zip_code' => 'required_if:role,manager',
             ]);
  
 
@@ -41,13 +42,27 @@ class AuthController extends Controller
                 ]);
             }
 
-    
 
-    $user = new User([
-      'name' => $request->name,
-      'email' => $request->email,
-      'password' => bcrypt($request->password)
-    ]);
+    $user = new User();
+    $user->name = $request->name;
+    $user->email = $request->email;
+    $user->password = empty($request->password) ? bcrypt('12345678') : bcrypt($request->password);
+
+    if(!empty($request->phone_number))  $user->phone_number = $request->phone_number;
+    if(!empty($request->gender))  $user->gender = $request->gender;
+    if(!empty($request->zip_code))  $user->zip_code = $request->zip_code;
+    if(!empty($request->area_name))  $user->area_name = $request->area_name;
+    $user->created_by_user = auth('api')->user()->id;
+
+     if ($request->hasFile('picture')) {
+      $file = $request->file('picture');
+      $file_extension = $file->getClientOriginalExtension();
+      $uploadedFile =   (time() + 1) . '.' . $file_extension;
+      $uploadDir    = public_path('tmp/images');
+      $file->move($uploadDir, $uploadedFile);
+      $user->picture = $uploadedFile;
+    }
+    
     if ($user->save()) {
       $user->assignRole($request->role);
       return response([ 'msg' => 'Successfully created user!'], 200);
@@ -140,5 +155,4 @@ class AuthController extends Controller
     }
 
   }
-
 }

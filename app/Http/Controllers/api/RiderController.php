@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Rider;
+use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 
 class RiderController extends Controller
@@ -17,7 +18,10 @@ class RiderController extends Controller
     public function index()
     {
         //
-        $riders = Rider::orderBy('id', 'DESC')->get();
+        $riders = User::whereHas(
+                            'roles', function($q){
+                                $q->where('slug', 'rider');
+                          })->get();
         return response()->json([
             'riders' => $riders
         ]);
@@ -35,7 +39,7 @@ class RiderController extends Controller
     {
         //
         try{
-            $rider = Rider::find($id);
+            $rider = User::find($id);
             if($rider){
                 return response()->json([
                     'msg' => 'success',
@@ -60,47 +64,47 @@ class RiderController extends Controller
     public function store(Request $request)
     {
        //
-        try{
-            $validator = Validator::make($request->all(), [
-                'name' => 'required',
-                'phone_number'=>'required',
-                'area_name' => 'required',
-                // 'picture' => 'mimes:jpeg,jpg,png,bmp'
-            ]);
+        // try{
+        //     $validator = Validator::make($request->all(), [
+        //         'name' => 'required',
+        //         'phone_number'=>'required',
+        //         'area_name' => 'required',
+        //         // 'picture' => 'mimes:jpeg,jpg,png,bmp'
+        //     ]);
  
-            if ($validator->fails()) {
-                return response()->json([
-                    'msg' => $validator->errors()->first()
-                ]);
-            }
+        //     if ($validator->fails()) {
+        //         return response()->json([
+        //             'msg' => $validator->errors()->first()
+        //         ]);
+        //     }
 
 
-            $rider = new Rider();            
-            $rider->name = $request->name; 
-            $rider->phone_number = $request->phone_number;
-            $rider->area_name = $request->area_name; 
+        //     $rider = new Rider();            
+        //     $rider->name = $request->name; 
+        //     $rider->phone_number = $request->phone_number;
+        //     $rider->area_name = $request->area_name; 
             
             
-            if ($request->hasFile('picture')) {
-                $file = $request->file('picture');
-                $file_extension = $file->getClientOriginalExtension();
-                $uploadedFile =   (time() + 1) . '.' . $file_extension;
-                $uploadDir    = public_path('tmp/images');
-                $file->move($uploadDir, $uploadedFile);
-                $rider->picture = $uploadedFile;
-             }
-            $rider->save();
+        //     if ($request->hasFile('picture')) {
+        //         $file = $request->file('picture');
+        //         $file_extension = $file->getClientOriginalExtension();
+        //         $uploadedFile =   (time() + 1) . '.' . $file_extension;
+        //         $uploadDir    = public_path('tmp/images');
+        //         $file->move($uploadDir, $uploadedFile);
+        //         $rider->picture = $uploadedFile;
+        //      }
+        //     $rider->save();
 
-            return response()->json([
-                'msg' => 'success',
-                'rider' => $rider,
-            ]);
-        } catch(\Exception $e){
-            return response()->json([
-                'msg' => 'error',
-                'exception' => $e->getMessage()
-            ]);
-        }
+        //     return response()->json([
+        //         'msg' => 'success',
+        //         'rider' => $rider,
+        //     ]);
+        // } catch(\Exception $e){
+        //     return response()->json([
+        //         'msg' => 'error',
+        //         'exception' => $e->getMessage()
+        //     ]);
+        // }
     }
 
     /**
@@ -127,11 +131,12 @@ class RiderController extends Controller
                 ]);
             }
 
-            $rider = Rider::find($id);          
+            $rider = User::find($id);          
 
             $rider->name = $request->name; 
             $rider->phone_number = $request->phone_number;
             $rider->area_name = $request->area_name; 
+            $rider->created_by_user = auth('api')->user()->id;
             
              if ($request->hasFile('picture') && !file_exists('tmp/images/' . $request->picture)) {
                 $file = $request->file('picture');
@@ -165,7 +170,7 @@ class RiderController extends Controller
     {
         //
         try{
-            $rider = Rider::find($id);
+            $rider = User::find($id);
             if($rider){
                 if($rider->picture && file_exists(public_path().'/tmp/images/' . $rider->picture)){
                     unlink(public_path().'/tmp/images/' . $rider->picture);

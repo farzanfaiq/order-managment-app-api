@@ -41,6 +41,9 @@ class UserSeeder extends Seeder
             'phone_number' => '0990009090', 
             'gender' => 'male'
         ]);
+
+
+        
     }
 
 
@@ -51,6 +54,16 @@ class UserSeeder extends Seeder
 
         Roles::create(
             [ 'name' => 'Customer', 'slug' => 'customer']
+        );
+
+
+        Roles::create(
+            [ 'name' => 'Manager', 'slug' => 'manager']
+        );
+
+
+        Roles::create(
+            [ 'name' => 'Rider', 'slug' => 'rider']
         );
         
     }
