@@ -33,8 +33,8 @@ Route::group(['middleware'=>'auth:api'],function(){
     Route::post('logout', [AuthController::class, 'logout']);
     
 // if(Auth::user() && !Auth::user()->hasRole('customer')){
-    Route::resource('area-manager', Api\AreaManagerController::class)->only(['index', 'store', 'show', 'destory']);
-    Route::resource('rider', Api\RiderController::class)->only(['index', 'store', 'show', 'destory']);    
+    Route::resource('area-manager', Api\AreaManagerController::class);
+    Route::resource('rider', Api\RiderController::class);    
     
     Route::post('area-manager/{id}', 'Api\AreaManagerController@update');
     Route::post('rider/{id}', 'Api\RiderController@update');
