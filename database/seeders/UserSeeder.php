@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Permissions;
 use App\Models\Roles;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -20,7 +21,9 @@ class UserSeeder extends Seeder
         //
         $this->users();
         $this->roles();
+        $this->permission();
         $this->assignRole();
+        $this->assignPermission();
     }
 
     public function users(){
@@ -46,6 +49,52 @@ class UserSeeder extends Seeder
         
     }
 
+
+    public function permission(){
+        Permissions::create(
+            [ 'name' => 'Dashboard', 'slug' => 'dashboard']
+        );
+
+        Permissions::create(
+            [ 'name' => 'Manager List', 'slug' => 'manager-list']
+        );
+
+        
+        Permissions::create(
+            [ 'name' => 'Manager Create', 'slug' => 'manager-create']
+        );
+
+        
+        Permissions::create(
+            [ 'name' => 'Manager Delete', 'slug' => 'manager-delete']
+        );
+
+
+        Permissions::create(
+            [ 'name' => 'Manager Update', 'slug' => 'manager-update']
+        );
+
+
+        Permissions::create(
+            [ 'name' => 'Rider List', 'slug' => 'rider-list']
+        );
+
+        
+        Permissions::create(
+            [ 'name' => 'Rider Create', 'slug' => 'rider-create']
+        );
+
+        
+        Permissions::create(
+            [ 'name' => 'Rider Delete', 'slug' => 'rider-delete']
+        );
+
+
+        Permissions::create(
+            [ 'name' => 'Rider Update', 'slug' => 'rider-update']
+        );
+        
+    }
 
     public function roles(){
         Roles::create(
@@ -75,5 +124,24 @@ class UserSeeder extends Seeder
 
         $customer = User::find(2);
         $customer->assignRole('customer');
+    }
+
+    public function assignPermission(){
+        $permissions = Permissions::all();
+        $roles = Roles::find(1);
+
+        foreach($permissions as $permission){
+            $roles->permissions()->attach($permission);
+        }
+
+
+        $roles = Roles::find(3);
+
+        foreach($permissions as $permission){
+            if($permission->slug = 'rider-list' ||  $permission->slug = 'rider-create' ||  $permission->slug = 'rider-delete' ||  $permission->slug = 'rider-update'){
+                $roles->permissions()->attach($permission);
+            }
+        }
+
     }
 }
