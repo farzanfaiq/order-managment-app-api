@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Rider;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 
@@ -18,10 +17,7 @@ class RiderController extends Controller
     public function index()
     {
         //
-        $riders = User::whereHas(
-                            'roles', function($q){
-                                $q->where('slug', 'rider');
-                          })->get();
+        $riders = User::role('rider')->get();
         return response()->json([
             'riders' => $riders
         ]);

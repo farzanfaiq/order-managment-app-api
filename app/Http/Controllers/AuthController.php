@@ -28,7 +28,7 @@ class AuthController extends Controller
                 'email' => 'required|string|email|unique:users',
                 'password' => 'required_if:role,admin|required_if:role,customer|string',
                 'c_password' => 'required_if:role,admin|required_if:role,customer|same:password',
-                'role' => 'exists:roles,slug|required|string',
+                'role' => 'exists:roles,name|required|string',
                 'phone_number' => 'required_if:role,customer|required_if:role,manager|required_if:role,rider',
                 'gender' => 'required_if:role,customer',
                 'area_name' => 'required_if:role,manager|required_if:role,rider',
@@ -95,25 +95,27 @@ class AuthController extends Controller
         ]);
     }
 
-    $type = $request->input('type');
+    // $type = $request->input('type');
     $email = $request->input('email');
     $password = $request->input('password');
 
-    $user = User::with(['roles'])->where('email', '=', $email)->first();
+    $user = User::with('roles')->where('email', '=', $email)->first();
 
     if(!$user){
       return response()->json([ 'msg' => 'Email Incorrect'], 401);
     }
 
-    if($type != $user->roles->last()->slug){
-      return response()->json([ 'msg' => 'Incorrect credentials'], 401);
-    }
+
+    // if($user->getRoleNames()->last() != $type){
+    //   return response()->json([ 'msg' => 'Incorrect credentials'], 401);
+    // }
 
     if (!Hash::check($password, $user->password)) {
       return response()->json([ 'msg' => 'Password Incorrect'], 401);
     }   
 
     $tokenResult = $user->createToken(rand(10, 99999));
+    $user->getAllPermissions();
     $token = $tokenResult->token;
     if ($request->remember_me)
         $token->expires_at = Carbon::now()->addWeeks(1);
@@ -125,7 +127,7 @@ class AuthController extends Controller
          'expires_at' => Carbon::parse(
              $tokenResult->token->expires_at
           )->toDateTimeString(),
-          'user' => $user
+          'user' => $user,
       ], 200);
   }
 

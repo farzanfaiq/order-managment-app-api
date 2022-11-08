@@ -1,13 +1,13 @@
 <?php
 
 namespace Database\Seeders;
-
-use App\Models\Permissions;
-use App\Models\Roles;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
+use function Ramsey\Uuid\v1;
 
 class UserSeeder extends Seeder
 {
@@ -51,70 +51,22 @@ class UserSeeder extends Seeder
 
 
     public function permission(){
-        Permissions::create(
-            [ 'name' => 'Dashboard', 'slug' => 'dashboard']
-        );
-
-        Permissions::create(
-            [ 'name' => 'Manager List', 'slug' => 'manager-list']
-        );
-
-        
-        Permissions::create(
-            [ 'name' => 'Manager Create', 'slug' => 'manager-create']
-        );
-
-        
-        Permissions::create(
-            [ 'name' => 'Manager Delete', 'slug' => 'manager-delete']
-        );
-
-
-        Permissions::create(
-            [ 'name' => 'Manager Update', 'slug' => 'manager-update']
-        );
-
-
-        Permissions::create(
-            [ 'name' => 'Rider List', 'slug' => 'rider-list']
-        );
-
-        
-        Permissions::create(
-            [ 'name' => 'Rider Create', 'slug' => 'rider-create']
-        );
-
-        
-        Permissions::create(
-            [ 'name' => 'Rider Delete', 'slug' => 'rider-delete']
-        );
-
-
-        Permissions::create(
-            [ 'name' => 'Rider Update', 'slug' => 'rider-update']
-        );
-        
+        Permission::create([ 'name' => 'dashboard']);
+        Permission::create([ 'name' => 'manager-list']);
+        Permission::create([ 'name' => 'manager-create']);
+        Permission::create([ 'name' => 'manager-delete']);
+        Permission::create([ 'name' => 'manager-update']);
+        Permission::create([ 'name' => 'rider-list']);
+        Permission::create([ 'name' => 'rider-create']);
+        Permission::create([ 'name' => 'rider-delete']);
+        Permission::create([ 'name' => 'rider-update']);
     }
 
     public function roles(){
-        Roles::create(
-            [ 'name' => 'Admin', 'slug' => 'admin']
-        );
-
-        Roles::create(
-            [ 'name' => 'Customer', 'slug' => 'customer']
-        );
-
-
-        Roles::create(
-            [ 'name' => 'Manager', 'slug' => 'manager']
-        );
-
-
-        Roles::create(
-            [ 'name' => 'Rider', 'slug' => 'rider']
-        );
-        
+        Role::create([ 'name' => 'admin']);
+        Role::create([ 'name' => 'customer']);
+        Role::create([ 'name' => 'manager']);
+        Role::create([ 'name' => 'rider']);
     }
 
 
@@ -127,19 +79,18 @@ class UserSeeder extends Seeder
     }
 
     public function assignPermission(){
-        $permissions = Permissions::all();
-        $roles = Roles::find(1);
+        $permissions = Permission::all();
+        $roles = Role::find(1);
 
         foreach($permissions as $permission){
-            $roles->permissions()->attach($permission);
+            $roles->givePermissionTo($permission);
         }
-
-
-        $roles = Roles::find(3);
+        
+        $roles = Role::find(3);
 
         foreach($permissions as $permission){
-            if($permission->slug = 'rider-list' ||  $permission->slug = 'rider-create' ||  $permission->slug = 'rider-delete' ||  $permission->slug = 'rider-update'){
-                $roles->permissions()->attach($permission);
+            if($permission->name = 'rider-list' ||  $permission->name = 'rider-create' ||  $permission->name = 'rider-delete' ||  $permission->name = 'rider-update'){
+                $roles->givePermissionTo($permission);
             }
         }
 

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\AreaManager;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 
@@ -18,11 +17,7 @@ class AreaManagerController extends Controller
     public function index()
     {
         //
-        $area_managers =  User::whereHas(
-                            'roles', function($q){
-                                $q->where('slug', 'manager');
-                          })->get();
-
+        $area_managers =  User::role('manager')->get();
         return response()->json([
             'area_managers' => $area_managers
         ]);
