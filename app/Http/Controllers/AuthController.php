@@ -95,7 +95,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // $type = $request->input('type');
+    $type = $request->input('type');
     $email = $request->input('email');
     $password = $request->input('password');
 
@@ -106,9 +106,18 @@ class AuthController extends Controller
     }
 
 
-    // if($user->getRoleNames()->last() != $type){
-    //   return response()->json([ 'msg' => 'Incorrect credentials'], 401);
-    // }
+    if($type == "customer"){
+      if($user->getRoleNames()->first() != "customer"){
+          return response()->json([ 'msg' => 'Incorrect credentials'], 401);
+      }
+    }
+
+    
+    if($type != "customer"){
+      if($user->getRoleNames()->first() == "customer"){
+          return response()->json([ 'msg' => 'Incorrect credentials'], 401);
+      }
+    }
 
     if (!Hash::check($password, $user->password)) {
       return response()->json([ 'msg' => 'Password Incorrect'], 401);
