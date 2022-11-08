@@ -141,6 +141,10 @@ class AreaManagerController extends Controller
             $area_manager->zip_code = $request->zip_code; 
             $area_manager->created_by_user = auth('api')->user()->id;
             
+
+             if (!$request->hasFile('picture')){
+                    $area_manager->picture = null;
+             }
             if ($request->hasFile('picture') && !file_exists('tmp/images/' . $request->picture)) {
                 $file = $request->file('picture');
                 $file_extension = $file->getClientOriginalExtension();

@@ -134,6 +134,10 @@ class RiderController extends Controller
             $rider->area_name = $request->area_name; 
             $rider->created_by_user = auth('api')->user()->id;
             
+              if (!$request->hasFile('picture')){
+                    $rider->picture = null;
+             }
+             
              if ($request->hasFile('picture') && !file_exists('tmp/images/' . $request->picture)) {
                 $file = $request->file('picture');
                 $file_extension = $file->getClientOriginalExtension();
